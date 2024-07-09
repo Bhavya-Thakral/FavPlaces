@@ -3,6 +3,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import PlacesList from '../components/PlacesList/PlacesList'
 import { GlobalColors } from '../constants/Colors'
 import { useIsFocused } from '@react-navigation/native'
+import { fetchPlaces } from '../utils/Database'
 
 
 
@@ -25,8 +26,13 @@ const AllPlaces = ({navigation , route }) => {
   })
 
   useEffect(()=>{
-    if(isFocused && route.params){
-      setListedPlaces(curPlace => [...curPlace,route.params.place])
+    async function loadPlaces(){
+      const places = await fetchPlaces();
+      setListedPlaces(places);
+    }
+    if(isFocused){
+      loadPlaces();
+      // setListedPlaces(curPlace => [...curPlace,route.params.place])
     }
   },[isFocused]);
 

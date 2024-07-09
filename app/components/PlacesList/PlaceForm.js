@@ -10,29 +10,26 @@ const PlaceForm = ({onCreatePlace}) => {
 
     const [form, setForm] = useState({
         title:'',
-        image:'',
+        image:null,
         location:null
     })
 
-   
-
-    // console.log(form);
+    console.log("form",form);
 
     function handleImg(img){
-     return setForm({...form, image:img})   
+      setForm(prevFormData => ({...prevFormData, image:img}))   
     }
 
     const handleLocation = useCallback((location)=>{
       console.log("getting location",location);
-      return setForm({...form, location:location})
+      setForm(prevFormData =>({...prevFormData, location:location}))
         
     },[]);
 
     function shareForm(){
-      console.log("form title",form.title);
-      console.log("form image",form.image);
-      console.log("form location",form.location);
+      console.log("form",form);
       const finalPlace = new Place( form.title, form.image, form.location);
+      console.log("finalPlace",finalPlace);
       onCreatePlace(finalPlace);
     }
 
@@ -40,7 +37,7 @@ const PlaceForm = ({onCreatePlace}) => {
     <ScrollView style={styles.form} showsVerticalScrollIndicator={false} >
       <View style={styles.container}>
         <Text style={styles.title}>Place Title</Text>
-        <TextInput style={styles.input} onChangeText={(text)=> setForm({...form , title:text}) } value={form.title} />
+        <TextInput style={styles.input} onChangeText={(text)=> setForm({...form , title:text})} value={form.title} />
       </View>
      
      <ImagePickers handleImg={handleImg} />

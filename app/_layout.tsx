@@ -5,13 +5,31 @@ import AddPlaces from "./screens/AddPlaces";
 import PlaceDetails from "./screens/PlaceDetails";
 import Map from "./screens/Map";
 
+import { init } from "./utils/Database";
+
 import { StatusBar, StyleSheet } from "react-native";
 import { GlobalColors } from "./constants/Colors";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useEffect, useState } from "react";
+import AppLoading from "expo-app-loading";
+import SplashScreen from "expo-splash-screen";
 
 const Stack = createNativeStackNavigator();
 
 export default function RootLayout() {
+  const [dbInitialized, setDbInitialized] = useState(false);
+  useEffect(() => {
+    init()
+      .then(() => {
+        setDbInitialized(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // if (!dbInitialized) return <SplashScreen autoHideSplash={false} />;
+
   return (
     <GestureHandlerRootView>
       <NavigationContainer independent={true}>

@@ -26,7 +26,7 @@ const ImagePickers = ({handleImg}) => {
 
     async function handleImageCapture(){
 
-        const hasPermission = verifyPermission();
+        const hasPermission = await verifyPermission();
 
         if(!hasPermission) return;
 
@@ -55,7 +55,7 @@ const ImagePickers = ({handleImg}) => {
         })
         if(!image.canceled){
             setImageUri(image.assets[0].uri);
-            handleImg(imageUri);
+            handleImg(image.assets[0].uri);
 
         }else {
             Alert.alert('No Image Selected');

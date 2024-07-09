@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { GlobalColors } from "@/app/constants/Colors";
 import Button from "@/app/components/Button";
@@ -18,6 +18,32 @@ const LocationPicker = ({ handleLocation }) => {
 
   const [locationPermissionInformation, requestPermission] =
     Location.useForegroundPermissions();
+
+
+    useEffect(() => {
+      if (isFocused && route.params) {
+        const mapPickedLocation = {
+          lat: route.params.pickedLat,
+          lng: route.params.pickedLng,
+        };
+  
+        setLocation(mapPickedLocation);
+      }
+    }, [route, isFocused]);
+  
+    useEffect(() => {
+      async function getLocation() {
+        if (location) {
+          const humanAddress = await getAddress(
+             location.lat,
+            location.lng,
+          );
+          handleLocation({ ...location, address: humanAddress });
+        }
+      }
+      getLocation();
+    }, [location, handleLocation]);
+
 
   async function verifyPermission() {
     if (
@@ -40,23 +66,14 @@ const LocationPicker = ({ handleLocation }) => {
   }
 
   async function handleUserLocation() {
-    await verifyPermission();
+   const hasPermission =  await verifyPermission();
 
-    if (!locationPermissionInformation) return;
+    if (!hasPermission) return;
 
     const location = await Location.getCurrentPositionAsync();
     setLocation({
       lat: location.coords.latitude,
       lng: location.coords.longitude,
-    });
-    const humanAddress = await getAddress(
-     location.coords.latitude,
-     location.coords.longitude,
-    );
-    handleLocation({
-      lat: location.coords.latitude,
-      lng: location.coords.longitude,
-      address: humanAddress,
     });
   }
 
@@ -64,31 +81,7 @@ const LocationPicker = ({ handleLocation }) => {
     navigation.navigate("Map");
   }
 
-  useEffect(() => {
-    if (isFocused && route.params) {
-      const mapPickedLocation = {
-        lat: route.params.pickedLat,
-        lng: route.params.pickedLng,
-      };
 
-      setLocation(mapPickedLocation);
-      handleLocation(mapPickedLocation);
-    }
-  }, [route, isFocused]);
-
-  useEffect(() => {
-    async function getLocation() {
-      if (location) {
-        const humanAddress = await getAddress(
-           location.lat,
-          location.lng,
-        );
-        //    console.log("human address",humanAddress);
-        handleLocation({ ...location, address: humanAddress });
-      }
-    }
-    getLocation();
-  }, [location, handleLocation]);
 
   return (
     <View style={styles.container}>
